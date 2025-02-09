@@ -1,5 +1,6 @@
 import * as PIXI from "pixi.js";
 import { range } from "./common";
+import { DARTS_NUMBERS } from "./constants";
 
 type CircleParams = {
   startX: number;
@@ -8,7 +9,9 @@ type CircleParams = {
   width?: number;
   colors: ReadonlyArray<number>;
   parts: number;
+  throwPrefix: "" | "D" | "T";
   angularShift?: number;
+  onClick?: (clicked: string) => void;
 };
 
 export const createDartPointsCircle = ({
@@ -18,11 +21,13 @@ export const createDartPointsCircle = ({
   width,
   colors,
   parts,
+  onClick,
+  throwPrefix,
   angularShift = 0,
 }: CircleParams) => {
   const result = new PIXI.Container();
   const angle = (3 * Math.PI) / 2;
-  range(0, parts).forEach((i) => {
+  range(0, parts - 1).forEach((i) => {
     const startAngle = angle + i * ((2 * Math.PI) / parts) + angularShift;
     const endAngle = angle + (i + 1) * ((2 * Math.PI) / parts) + angularShift;
 
@@ -43,7 +48,8 @@ export const createDartPointsCircle = ({
     });
 
     circlePart.on("click", () => {
-      console.log(i * 3 + "clicked");
+      console.log(i);
+      onClick?.(`${throwPrefix}${DARTS_NUMBERS[i]}`);
     });
 
     result.addChild(circlePart);

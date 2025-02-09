@@ -1,6 +1,6 @@
 import { createSignal, type Component } from "solid-js";
-import { PixiApplication } from "./PixiApplication";
-import { PixiDarts } from "./PixiDarts";
+import { PixiApplication } from "./components/PixiApplication";
+import { PixiDarts } from "./components/PixiDarts";
 
 const App: Component = () => {
   const [state, seState] = createSignal("");

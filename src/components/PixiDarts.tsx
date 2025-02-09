@@ -1,7 +1,7 @@
 import { onCleanup, onMount } from "solid-js";
 import { useApplication } from "./PixiApplication";
-import { createDartPointsCircle } from "./utils/ring";
-import { calculatePointOnCircle } from "./utils/math";
+import { createDartPointsCircle } from "../utils/ring";
+import { calculatePointOnCircle } from "../utils/math";
 
 import * as PIXIFILTERS from "pixi-filters";
 import {
@@ -10,7 +10,7 @@ import {
   DART_MULTIPLE_POINTS_COLORS,
   DART_POINTS_COLORS,
   DARTS_NUMBERS,
-} from "./utils/constants";
+} from "../utils/constants";
 import * as PIXI from "pixi.js";
 
 type PixiDartsProps = {

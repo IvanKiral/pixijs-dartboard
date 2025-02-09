@@ -27,7 +27,7 @@ export const createDartPointsCircle = ({
 }: CircleParams) => {
   const result = new PIXI.Container();
   const angle = (3 * Math.PI) / 2;
-  range(0, parts - 1).forEach((i) => {
+  range(0, parts - 1).forEach(i => {
     const startAngle = angle + i * ((2 * Math.PI) / parts) + angularShift;
     const endAngle = angle + (i + 1) * ((2 * Math.PI) / parts) + angularShift;
 

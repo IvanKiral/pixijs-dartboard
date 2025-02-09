@@ -1,22 +1,55 @@
-import * as PIXI from "pixi.js";
+import { onCleanup, onMount } from "solid-js";
+import { useApplication } from "./PixiApplication";
 import { createDartPointsCircle } from "./utils/ring";
 import { calculatePointOnCircle } from "./utils/math";
 
 import * as PIXIFILTERS from "pixi-filters";
+import { DART_BOARD_GREEN_COLOR, DART_BOARD_RED_COLOR, DART_MULTIPLE_POINTS_COLORS, DART_POINTS_COLORS, DARTS_NUMBERS } from "./utils/constants";
+import * as PIXI from 'pixi.js';
 
-const DARTS_NUMBERS = [
-  20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5,
-] as const;
+type PixiDartsProps = {
+  onClick?: (clicked: string) => void;
+}
+
+export const PixiDarts = (props: PixiDartsProps) => {
+  const app = useApplication();
+  let dartBoard = new PIXI.Container();
+
+  onMount(() => {
+    const {x, y, radius} = calculateDartProps(app);
+    dartBoard = createDartBoard(x, y, radius, props.onClick);
+    app?.stage.addChild(dartBoard);
+
+    window?.addEventListener?.("resize", resizeHandle);
+  })
+
+  onCleanup(() => {
+    window.removeEventListener("resize", resizeHandle);
+    app?.stage.removeChild(dartBoard);
+  });
+
+  const resizeHandle = () => {
+    app?.stage.removeChild(dartBoard);
+
+    const {x, y, radius} = calculateDartProps(app);
+    dartBoard = createDartBoard(x, y, radius, props.onClick);
+
+    app?.stage.addChild(dartBoard);
+  }
+
+  return null;
+};
+
+const calculateDartProps = (app: PIXI.Application<PIXI.Renderer> | undefined) => {
+  const x = ((app?.screen.width ?? 0) - 5) / 2;
+  const y = ((app?.screen.height ?? 0) - 5) / 2;
+  const radius = Math.min(x, y) - 10;
+
+  return {x, y, radius};
+}
 
 const PARTS_NUMBER = DARTS_NUMBERS.length;
 const POLYGON_ANGLE = (2 * Math.PI) / PARTS_NUMBER;
-
-const DART_BOARD_RED_COLOR = 0xe3292e;
-const DART_BOARD_GREEN_COLOR = 0x309f6a;
-const DART_BOARD_YELLOW_COLOR = 0xf9dfbc;
-
-const DART_MULTIPLE_POINTS_COLORS = [0xe3292e, 0x309f6a] as const;
-const DART_POINTS_COLORS = [0x000000, DART_BOARD_YELLOW_COLOR] as const;
 
 const createDartBorder = (x: number, y: number, radius: number) => {
   const resultContainer = new PIXI.Container();
@@ -60,7 +93,7 @@ const createDartBorder = (x: number, y: number, radius: number) => {
   return resultContainer;
 };
 
-export const createDartBoard = (x: number, y: number, radius: number) => {
+const createDartBoard = (x: number, y: number, radius: number, onClick?: (clicked: string) => void) => {
   const container = new PIXI.Container();
   const dartBorder = createDartBorder(x, y, radius);
 
@@ -71,9 +104,11 @@ export const createDartBoard = (x: number, y: number, radius: number) => {
     colors: DART_POINTS_COLORS,
     parts: 20,
     angularShift: -(POLYGON_ANGLE / 2),
+    throwPrefix: "",
+    onClick,
   });
 
-  const triplePointsRing = createDartPointsCircle({
+  const doublePointsRing = createDartPointsCircle({
     startX: x,
     startY: y,
     radius: (5 / 6) * radius,
@@ -81,9 +116,11 @@ export const createDartBoard = (x: number, y: number, radius: number) => {
     colors: DART_MULTIPLE_POINTS_COLORS,
     parts: 20,
     angularShift: -(POLYGON_ANGLE / 2),
+    throwPrefix: "D",
+    onClick,
   });
 
-  const doublePointsRing = createDartPointsCircle({
+  const triplePointsRing = createDartPointsCircle({
     startX: x,
     startY: y,
     radius: (1 / 2) * radius,
@@ -91,6 +128,8 @@ export const createDartBoard = (x: number, y: number, radius: number) => {
     colors: DART_MULTIPLE_POINTS_COLORS,
     parts: 20,
     angularShift: -(POLYGON_ANGLE / 2),
+    throwPrefix: "T",
+    onClick,
   });
 
   const outerBullCircle = createDartPointsCircle({
@@ -99,6 +138,7 @@ export const createDartBoard = (x: number, y: number, radius: number) => {
     radius: (1 / 5) * radius,
     colors: [DART_BOARD_GREEN_COLOR],
     parts: 1,
+    throwPrefix: "",
   });
 
   const bullCircle = createDartPointsCircle({
@@ -107,6 +147,7 @@ export const createDartBoard = (x: number, y: number, radius: number) => {
     radius: (1 / 9) * radius,
     colors: [DART_BOARD_RED_COLOR],
     parts: 1,
+    throwPrefix: "",
   });
 
   container.addChild(dartBorder);

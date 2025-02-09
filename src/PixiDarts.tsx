@@ -4,24 +4,30 @@ import { createDartPointsCircle } from "./utils/ring";
 import { calculatePointOnCircle } from "./utils/math";
 
 import * as PIXIFILTERS from "pixi-filters";
-import { DART_BOARD_GREEN_COLOR, DART_BOARD_RED_COLOR, DART_MULTIPLE_POINTS_COLORS, DART_POINTS_COLORS, DARTS_NUMBERS } from "./utils/constants";
-import * as PIXI from 'pixi.js';
+import {
+  DART_BOARD_GREEN_COLOR,
+  DART_BOARD_RED_COLOR,
+  DART_MULTIPLE_POINTS_COLORS,
+  DART_POINTS_COLORS,
+  DARTS_NUMBERS,
+} from "./utils/constants";
+import * as PIXI from "pixi.js";
 
 type PixiDartsProps = {
   onClick?: (clicked: string) => void;
-}
+};
 
 export const PixiDarts = (props: PixiDartsProps) => {
   const app = useApplication();
   let dartBoard = new PIXI.Container();
 
   onMount(() => {
-    const {x, y, radius} = calculateDartProps(app);
+    const { x, y, radius } = calculateDartProps(app);
     dartBoard = createDartBoard(x, y, radius, props.onClick);
     app?.stage.addChild(dartBoard);
 
     window?.addEventListener?.("resize", resizeHandle);
-  })
+  });
 
   onCleanup(() => {
     window.removeEventListener("resize", resizeHandle);
@@ -31,22 +37,24 @@ export const PixiDarts = (props: PixiDartsProps) => {
   const resizeHandle = () => {
     app?.stage.removeChild(dartBoard);
 
-    const {x, y, radius} = calculateDartProps(app);
+    const { x, y, radius } = calculateDartProps(app);
     dartBoard = createDartBoard(x, y, radius, props.onClick);
 
     app?.stage.addChild(dartBoard);
-  }
+  };
 
   return null;
 };
 
-const calculateDartProps = (app: PIXI.Application<PIXI.Renderer> | undefined) => {
+const calculateDartProps = (
+  app: PIXI.Application<PIXI.Renderer> | undefined
+) => {
   const x = ((app?.screen.width ?? 0) - 5) / 2;
   const y = ((app?.screen.height ?? 0) - 5) / 2;
   const radius = Math.min(x, y) - 10;
 
-  return {x, y, radius};
-}
+  return { x, y, radius };
+};
 
 const PARTS_NUMBER = DARTS_NUMBERS.length;
 const POLYGON_ANGLE = (2 * Math.PI) / PARTS_NUMBER;
@@ -93,7 +101,12 @@ const createDartBorder = (x: number, y: number, radius: number) => {
   return resultContainer;
 };
 
-const createDartBoard = (x: number, y: number, radius: number, onClick?: (clicked: string) => void) => {
+const createDartBoard = (
+  x: number,
+  y: number,
+  radius: number,
+  onClick?: (clicked: string) => void
+) => {
   const container = new PIXI.Container();
   const dartBorder = createDartBorder(x, y, radius);
 

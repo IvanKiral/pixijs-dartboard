@@ -1,24 +1,16 @@
-import { createSignal, type Component } from "solid-js";
-import { PixiApplication } from "./components/PixiApplication";
-import { PixiDarts } from "./components/PixiDarts";
+import { type Component } from "solid-js";
+import { DartView } from "./components/DartView";
 
 const App: Component = () => {
-  const [state, seState] = createSignal("");
-  let myDiv;
-
   return (
-    <>
-      <h1>Hello {state()}</h1>
-      <div style={{ width: "50vw", height: "100vh" }} ref={myDiv}>
-        <PixiApplication
-          antialias={true}
-          resizeTo={myDiv}
-          background={0x1099bb}
-        >
-          <PixiDarts onClick={clicked => seState(clicked)}></PixiDarts>
-        </PixiApplication>
+    <div class="w-full h-screen flex">
+      <div class="h-full flex-1 flex flex-col items-center justify-center">
+        <h1 class="w-fit">Dart Game</h1>
       </div>
-    </>
+      <div class="flex-1">
+        <DartView></DartView>
+      </div>
+    </div>
   );
 };
 

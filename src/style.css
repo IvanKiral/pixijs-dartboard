@@ -1,1 +1,20 @@
 @import "tailwindcss";
+
+@theme {
+  /* Primary Color */
+  --color-primary: #27445d;
+  --color-primary-hover: #233d54;
+
+  /* Secondary Color */
+  --color-secondary: #497d74;
+  --color-secondary-hover: #427168;
+
+  /* Accent Color */
+  --color-accent: #71bbb2;
+  --color-accent-hover: #66a8a0;
+
+  /* Neutral/Background Color */
+  --color-background: #efe9d5;
+  --color-background-hover: #d7d2c0;
+
+}

@@ -1,7 +1,7 @@
 import {
   createContext,
   createResource,
-  JSX,
+  type JSX,
   onCleanup,
   Show,
   Suspense,

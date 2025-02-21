@@ -1,14 +1,23 @@
-import { type Component } from "solid-js";
+import { type Component, Show } from "solid-js";
 import { DartView } from "./components/DartView";
+import { NewGameModal } from "./components/NewGameModal";
+import { type GameState, getGameState } from "./utils/game";
 
 const App: Component = () => {
   return (
     <div class="w-full h-screen flex">
       <div class="h-full flex-1 flex flex-col items-center justify-center">
-        <h1 class="w-fit">Dart Game</h1>
+        <Show when={getGameState()} keyed={true} fallback={<NewGameModal />}>
+          {(state: GameState) => (
+            <p>
+              Welcome {state.players.join(", ")} You are playing{" "}
+              {state.gameMode} darts
+            </p>
+          )}
+        </Show>
       </div>
       <div class="flex-1">
-        <DartView></DartView>
+        <DartView />
       </div>
     </div>
   );

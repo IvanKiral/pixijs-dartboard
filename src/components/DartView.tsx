@@ -1,18 +1,23 @@
 import { createSignal } from "solid-js";
 import { PixiApplication } from "./PixiApplication";
 import { PixiDarts } from "./PixiDarts";
+import { handleThrow } from "../utils/game";
+import { isDartValue, type DartValue } from "../utils/constants";
 
 export const DartView = () => {
-  const [darts, setDarts] = createSignal<string[]>([]);
+  const [darts, setDarts] = createSignal<DartValue[]>([]);
   let myDiv;
 
   const onDartBoardClick = (clicked: string) => {
+    if(!isDartValue(clicked)) return;
+
     if (darts().length >= 3) return;
 
     setDarts(prev => [...prev, clicked]);
   };
 
   const acceptDarts = () => {
+    handleThrow(darts());
     setDarts([]);
   };
 
@@ -37,7 +42,7 @@ export const DartView = () => {
           resizeTo={myDiv}
           background={0xffffff}
         >
-          <PixiDarts onClick={clicked => onDartBoardClick(clicked)}></PixiDarts>
+          <PixiDarts onClick={clicked => onDartBoardClick(clicked)} />
         </PixiApplication>
       </div>
     </div>

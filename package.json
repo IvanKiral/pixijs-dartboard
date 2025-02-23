@@ -7,13 +7,18 @@
     "dev": "vite",
     "format": "biome format --write .",
     "build": "tsc && vite build",
+    "test": "vitest",
     "preview": "vite preview"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
+    "install": "^0.13.0",
+    "jsdom": "^26.0.0",
+    "npm": "^11.1.0",
     "typescript": "~5.6.2",
     "vite": "^6.0.5",
-    "vite-plugin-solid": "^2.11.1"
+    "vite-plugin-solid": "^2.11.1",
+    "vitest": "^3.0.6"
   },
   "dependencies": {
     "@kobalte/core": "^0.13.8",

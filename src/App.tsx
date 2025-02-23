@@ -2,19 +2,21 @@ import { type Component, Show } from "solid-js";
 import { DartView } from "./components/DartView";
 import { NewGameModal } from "./components/NewGameModal";
 import { type GameState, getGameState } from "./utils/game";
+import ScoreTable from "./components/ScoreTable";
 
 const App: Component = () => {
   return (
     <div class="w-full h-screen flex">
       <div class="h-full flex-1 flex flex-col items-center justify-center">
-        <Show when={getGameState()} keyed={true} fallback={<NewGameModal />}>
+        {/* <Show when={getGameState()} keyed={true} fallback={<NewGameModal />}>
           {(state: GameState) => (
             <p>
               Welcome {state.players.join(", ")} You are playing{" "}
               {state.gameMode} darts
             </p>
           )}
-        </Show>
+        </Show> */}
+        <ScoreTable players={getGameState()?.players ?? []}/>
       </div>
       <div class="flex-1">
         <DartView />

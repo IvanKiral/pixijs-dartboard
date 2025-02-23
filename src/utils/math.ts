@@ -10,3 +10,5 @@ export const calculatePointOnCircle = (
 
   return [pointX, pointY] as const;
 };
+
+export const sum = (arr: number[]) => arr.reduce((acc, curr) => acc + curr, 0);

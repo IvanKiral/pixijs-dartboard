@@ -1,6 +1,10 @@
 import { Dialog } from "@kobalte/core/dialog";
-import { HiOutlinePlusCircle, HiOutlineXMark } from "solid-icons/hi";
-import { createEffect, createSignal, Index } from "solid-js";
+import {
+  HiOutlinePlusCircle,
+  HiOutlineXMark,
+  HiSolidPlusCircle,
+} from "solid-icons/hi";
+import { createEffect, createMemo, createSignal, Index } from "solid-js";
 import { createStore } from "solid-js/store";
 import { Input } from "./Input";
 import { RadioGroup } from "./RadioGroup";
@@ -18,25 +22,31 @@ const createNewInitialState = (): DialogState => ({
   gameMode: "501",
 });
 
-export const NewGameModal = () => {
+type NewGameModalProps = {
+  shouldShake: boolean;
+};
+
+export const NewGameModal = (props: NewGameModalProps) => {
   const [open, setOpen] = createSignal(false);
   const [dialogState, setDialogState] = createStore<DialogState>(
     createNewInitialState()
   );
-  const [players] = createSignal<string[]>(dialogState.playerNames);
+  const players = createMemo(() => dialogState.playerNames);
   const [gameMode, setGameMode] = createSignal<DialogState["gameMode"]>(
     dialogState.gameMode
   );
 
   const startGame = () => {
-    if (players().some(name => name.trim() === "")) {
+    if (players().some((name) => name.trim() === "")) {
       setDialogState("error", "Please provide names for all players");
       return;
     }
 
+    console.log("dialogState", players());
+    createGame(players(), gameMode());
     setDialogState(createNewInitialState());
     setOpen(false);
-    createGame(players(), gameMode());
+    console.log("players", players());
   };
 
   createEffect(() => {
@@ -46,21 +56,25 @@ export const NewGameModal = () => {
   return (
     <Dialog
       open={open()}
-      onOpenChange={newOpen => {
+      onOpenChange={(newOpen) => {
         if (!newOpen) {
           setDialogState(createNewInitialState());
         }
         setOpen(newOpen);
       }}
     >
-      <Dialog.Trigger class="bg-primary hover:bg-primary-hover outline-0 hover:scale-102 text-xl text-white px-6 py-2 rounded-md hover:opacity-90">
-        New Game
+      <Dialog.Trigger class="sticky bottom-4 right-4 ">
+        <HiSolidPlusCircle
+          class={`${
+            props.shouldShake && open() === false ? "animate-shake" : ""
+          } text-7xl bg-white text-primary hover:scale-105 hover:text-primary-hover cursor-pointer`}
+        />
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay class="fixed inset-0 z-50 bg-black opacity-20" />
         <div class="fixed inset-0 z-50 flex items-center justify-center">
           <Dialog.Content
-            onOpenAutoFocus={e => e.preventDefault()}
+            onOpenAutoFocus={(e) => e.preventDefault()}
             class="z-50 rounded-xl opacity-0 data-expanded:opacity-100 transition-all duration-1000 ease-in-out bg-white border border-[#d4d4d8]  shadow-lg min-w-[400px] p-6"
           >
             <div class="flex items-center justify-between mb-4">
@@ -76,7 +90,7 @@ export const NewGameModal = () => {
                 options={["501", "301", "Free"]}
                 name="Game Modes"
                 defaultValue={dialogState.gameMode}
-                onChange={value =>
+                onChange={(value) =>
                   setGameMode(value as DialogState["gameMode"])
                 }
               />
@@ -89,7 +103,7 @@ export const NewGameModal = () => {
                         placeholder="Player Name"
                         class=" w-full outline-secondary-hover"
                         value={player()}
-                        onInput={e => {
+                        onInput={(e) => {
                           setDialogState(
                             "playerNames",
                             index,

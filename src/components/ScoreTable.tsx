@@ -9,7 +9,7 @@ type ScoreTableProps = {
 
 const ScoreTable = (props: ScoreTableProps) => {
   const scoreRows = createMemo(() =>
-    zipMultipleWithPadding(...props.players.map((p) => p.rounds))
+    zipMultipleWithPadding(...props.players.map(p => p.rounds))
   );
 
   const createScoreRow = (
@@ -18,11 +18,9 @@ const ScoreTable = (props: ScoreTableProps) => {
   ) => {
     return (
       <tr>
-        <td class=" p-2 min-w-[8ch] text-center min-h-[1ch]">
-          {round}.
-        </td>
+        <td class=" p-2 min-w-[8ch] text-center min-h-[1ch]">{round}.</td>
         <Index each={playersRounds}>
-          {(round) => {
+          {round => {
             return (
               <td class="p-2 min-w-[8ch] text-center min-h-[1ch]">
                 {round()?.score}
@@ -38,9 +36,11 @@ const ScoreTable = (props: ScoreTableProps) => {
     <table>
       <thead>
         <tr>
-          <td class="min-w-[4ch] text-center bg-secondary text-white">Player</td>
+          <td class="min-w-[4ch] text-center bg-secondary text-white">
+            Player
+          </td>
           <For each={props.players}>
-            {(player) => (
+            {player => (
               <td class="p-2 text-center bg-secondary text-white min-w-[16ch]">
                 {player.name}
               </td>

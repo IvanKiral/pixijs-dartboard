@@ -15,7 +15,7 @@ export const DartView = () => {
 
     if (darts().length >= 3) return;
 
-    setDarts((prev) => [...prev, clicked]);
+    setDarts(prev => [...prev, clicked]);
   };
 
   const acceptDarts = () => {
@@ -34,20 +34,33 @@ export const DartView = () => {
           resizeTo={myDiv}
           background={0xffffff}
         >
-          <PixiDarts onClick={(clicked) => onDartBoardClick(clicked)} disabled={darts().length >= 3 || getGameState()?.state !== "playing"} />
+          <PixiDarts
+            onClick={clicked => onDartBoardClick(clicked)}
+            disabled={
+              darts().length >= 3 || getGameState()?.state !== "playing"
+            }
+          />
         </PixiApplication>
       </div>
 
       <ul class="flex flex-row gap-4 justify-center">
         <For each={[0, 1, 2]}>
-         {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
-         { index => <li class="w-[3ch] h-[2rem] text-2xl border-b-2 text-center cursor-pointer" onClick={() => setDarts(prev => prev.filter((_, i) => i !== index))}>
-            {darts()[index] ? darts()[index] : ""}
-          </li>
-          }
-          </For>
+          {index => (
+            <li
+              class="w-[3ch] h-[2rem] text-2xl border-b-2 text-center cursor-pointer"
+              onClick={() =>
+                setDarts(prev => prev.filter((_, i) => i !== index))
+              }
+            >
+              {darts()[index] ? darts()[index] : ""}
+            </li>
+          )}
+        </For>
         <li class="h-fit self-center">
-          <HiSolidCheck class="text-4xl justify-center self-center text-primary hover:text-primary-hover cursor-pointer transition-colors" onClick={acceptDarts} />
+          <HiSolidCheck
+            class="text-4xl justify-center self-center text-primary hover:text-primary-hover cursor-pointer transition-colors"
+            onClick={acceptDarts}
+          />
         </li>
       </ul>
     </div>

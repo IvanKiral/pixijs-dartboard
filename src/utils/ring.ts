@@ -56,7 +56,9 @@ export const createDartPointsCircle = ({
 
     circlePart.on("click", () => {
       if (disabled) return;
-      onClick?.(specialPart ? specialPart : `${throwPrefix}${DARTS_NUMBERS[i]}`);
+      onClick?.(
+        specialPart ? specialPart : `${throwPrefix}${DARTS_NUMBERS[i]}`
+      );
     });
 
     result.addChild(circlePart);

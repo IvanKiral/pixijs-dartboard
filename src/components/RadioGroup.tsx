@@ -28,7 +28,7 @@ export const RadioGroup: Component<RadioGroupProps> = props => {
               name={props.name}
               checked={selectedValue() === option}
               onChange={() => handleChange(option)}
-              class="w-4 h-4 text-primary border-gray-300 focus:ring-primary-500"
+              class="w-4 h-4 accent-primary"
             />
             <span class="text-sm text-gray-700">{option}</span>
           </label>

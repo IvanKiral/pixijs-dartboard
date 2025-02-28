@@ -14,3 +14,7 @@ export const zipMultipleWithPadding = <T>(...arrays: ReadonlyArray<ReadonlyArray
     arrays.map(arr => arr[i] ?? null)
   )
 }
+
+export const cloneDeep = <T>(value: T): T => {
+  return JSON.parse(JSON.stringify(value));
+}

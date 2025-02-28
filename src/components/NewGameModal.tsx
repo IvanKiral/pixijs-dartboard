@@ -4,22 +4,23 @@ import {
   HiOutlineXMark,
   HiSolidPlusCircle,
 } from "solid-icons/hi";
-import { createEffect, createMemo, createSignal, Index } from "solid-js";
-import { createStore } from "solid-js/store";
+import { createSignal, Index } from "solid-js";
+import { createStore, unwrap } from "solid-js/store";
 import { Input } from "./Input";
 import { RadioGroup } from "./RadioGroup";
 import { createGame } from "../utils/game";
+import { type GameMode, type GameModeRules, gameModes, updateGameModeRules } from "../utils/gameModes";
 
 type DialogState = {
   playerNames: string[];
   error: string | null;
-  gameMode: "501" | "301" | "Free";
+  ruleset: GameModeRules;
 };
 
 const createNewInitialState = (): DialogState => ({
   playerNames: [""],
   error: null,
-  gameMode: "501",
+  ruleset: updateGameModeRules(gameModes["501"], {}),
 });
 
 type NewGameModalProps = {
@@ -31,32 +32,27 @@ export const NewGameModal = (props: NewGameModalProps) => {
   const [dialogState, setDialogState] = createStore<DialogState>(
     createNewInitialState()
   );
-  const players = createMemo(() => dialogState.playerNames);
-  const [gameMode, setGameMode] = createSignal<DialogState["gameMode"]>(
-    dialogState.gameMode
-  );
 
   const startGame = () => {
-    if (players().some((name) => name.trim() === "")) {
+    const { playerNames, ruleset } = unwrap(dialogState);
+    if (playerNames.some(name => name.trim() === "")) {
       setDialogState("error", "Please provide names for all players");
       return;
     }
 
-    console.log("dialogState", players());
-    createGame(players(), gameMode());
+    const newRuleset = unwrap(dialogState.ruleset);
+
+    console.log("ruleset", newRuleset.calculateNewScore);
+
+    createGame(playerNames, ruleset);
     setDialogState(createNewInitialState());
     setOpen(false);
-    console.log("players", players());
   };
-
-  createEffect(() => {
-    console.log(gameMode());
-  });
 
   return (
     <Dialog
       open={open()}
-      onOpenChange={(newOpen) => {
+      onOpenChange={newOpen => {
         if (!newOpen) {
           setDialogState(createNewInitialState());
         }
@@ -74,7 +70,7 @@ export const NewGameModal = (props: NewGameModalProps) => {
         <Dialog.Overlay class="fixed inset-0 z-50 bg-black opacity-20" />
         <div class="fixed inset-0 z-50 flex items-center justify-center">
           <Dialog.Content
-            onOpenAutoFocus={(e) => e.preventDefault()}
+            onOpenAutoFocus={e => e.preventDefault()}
             class="z-50 rounded-xl opacity-0 data-expanded:opacity-100 transition-all duration-1000 ease-in-out bg-white border border-[#d4d4d8]  shadow-lg min-w-[400px] p-6"
           >
             <div class="flex items-center justify-between mb-4">
@@ -89,11 +85,23 @@ export const NewGameModal = (props: NewGameModalProps) => {
               <RadioGroup
                 options={["501", "301", "Free"]}
                 name="Game Modes"
-                defaultValue={dialogState.gameMode}
-                onChange={(value) =>
-                  setGameMode(value as DialogState["gameMode"])
+                defaultValue={dialogState.ruleset.id}
+                onChange={value =>
+                  setDialogState("ruleset", updateGameModeRules(gameModes[value as GameMode], {}))
                 }
               />
+              <div class="flex gap-2 items-center">
+                <Input
+                  id="numberOfRounds"
+                  type="number"
+                  class=" outline-secondary-hover max-w-[6ch] text-sm"
+                  value={dialogState.ruleset.numberOfRounds}
+                  onChange={e => {
+                    setDialogState("ruleset", "numberOfRounds", Number.parseInt(e.currentTarget.value));
+                  }}
+                />
+                <label for="numberOfRounds" class="text-sm text-gray-700">Number of rounds</label>
+              </div>
               <div class="flex flex-col gap-2">
                 <Index each={dialogState.playerNames}>
                   {(player, index) => {
@@ -101,9 +109,9 @@ export const NewGameModal = (props: NewGameModalProps) => {
                       <Input
                         type="text"
                         placeholder="Player Name"
-                        class=" w-full outline-secondary-hover"
+                        class=" w-full outline-secondary-hover min-w-[32ch]"
                         value={player()}
-                        onInput={(e) => {
+                        onInput={e => {
                           setDialogState(
                             "playerNames",
                             index,
@@ -116,9 +124,9 @@ export const NewGameModal = (props: NewGameModalProps) => {
                 </Index>
               </div>
               <HiOutlinePlusCircle
-                class="text-4xl text-secondary hover:text-secondary-hover cursor-pointer transition-colors self-center"
+                class="text-4xl text-primary hover:text-primary-hover cursor-pointer transition-colors self-center"
                 onClick={() =>
-                  setDialogState("playerNames", players().length, "")
+                  setDialogState("playerNames", dialogState.playerNames.length, "")
                 }
               />
               {dialogState.error && (

@@ -9,7 +9,7 @@ const App: Component = () => {
     <div class="w-full h-screen">
       <Show when={getGameState()}>
         {(game) => (
-          <div class="flex h-full">
+          <div class="flex flex-col lg:flex-row h-full">
             <div class="flex-1">
               <DartView />
             </div>

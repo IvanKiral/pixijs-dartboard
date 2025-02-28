@@ -18,13 +18,13 @@ const ScoreTable = (props: ScoreTableProps) => {
   ) => {
     return (
       <tr>
-        <td class="border border-black p-2 min-w-[8ch] text-center min-h-[1ch]">
+        <td class=" p-2 min-w-[8ch] text-center min-h-[1ch]">
           {round}.
         </td>
         <Index each={playersRounds}>
           {(round) => {
             return (
-              <td class="border border-black p-2 min-w-[8ch] text-center min-h-[1ch]">
+              <td class="p-2 min-w-[8ch] text-center min-h-[1ch]">
                 {round()?.score}
               </td>
             );
@@ -38,10 +38,10 @@ const ScoreTable = (props: ScoreTableProps) => {
     <table>
       <thead>
         <tr>
-          <td class="min-w-[4ch] text-center border-b border-r">Player</td>
+          <td class="min-w-[4ch] text-center bg-secondary text-white">Player</td>
           <For each={props.players}>
             {(player) => (
-              <td class="border  p-2 text-center border-primary bg-primary text-white min-w-[10ch]">
+              <td class="p-2 text-center bg-secondary text-white min-w-[16ch]">
                 {player.name}
               </td>
             )}
@@ -51,7 +51,6 @@ const ScoreTable = (props: ScoreTableProps) => {
       <tbody>
         <For each={scoreRows()}>
           {(row, index) => {
-            console.log("working hard ");
             return createScoreRow(index(), row);
           }}
         </For>

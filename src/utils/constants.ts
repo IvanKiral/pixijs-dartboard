@@ -34,7 +34,7 @@ export const possibleDarts = [
   "18", "D18", "T18",
   "19", "D19", "T19",
   "20", "D20", "T20",
-  "BULL", "OUTER_BULL", "0"
+  "B", "OB", "0"
 ] as const;
 
 export type DartValue = typeof possibleDarts[number];
@@ -60,7 +60,7 @@ export const POINTS_MAP = new Map<DartValue, number>([
   ["18", 18], ["D18", 36], ["T18", 54],
   ["19", 19], ["D19", 38], ["T19", 57],
   ["20", 20], ["D20", 40], ["T20", 60],
-  ["BULL", 50], ["OUTER_BULL", 25], ["0", 0],
+  ["B", 50], ["OB", 25], ["0", 0],
 ]);
 
 export const isDartValue = (value: string): value is DartValue => {

@@ -1,4 +1,4 @@
-import { onCleanup, onMount } from "solid-js";
+import { createEffect, createMemo, onCleanup, onMount } from "solid-js";
 import { useApplication } from "./PixiApplication";
 import { createDartPointsCircle } from "../utils/ring";
 import { calculatePointOnCircle } from "../utils/math";
@@ -15,15 +15,18 @@ import * as PIXI from "pixi.js";
 
 type PixiDartsProps = {
   onClick?: (clicked: string) => void;
+  disabled?: boolean;
 };
 
 export const PixiDarts = (props: PixiDartsProps) => {
   const app = useApplication();
   let dartBoard = new PIXI.Container();
 
+  const disabled = createMemo(() => props.disabled);
+
   onMount(() => {
     const { x, y, radius } = calculateDartProps(app);
-    dartBoard = createDartBoard(x, y, radius, props.onClick);
+    dartBoard = createDartBoard(x, y, radius, props.onClick, props.disabled);
     app?.stage.addChild(dartBoard);
 
     window?.addEventListener?.("resize", resizeHandle);
@@ -38,10 +41,19 @@ export const PixiDarts = (props: PixiDartsProps) => {
     app?.stage.removeChild(dartBoard);
 
     const { x, y, radius } = calculateDartProps(app);
-    dartBoard = createDartBoard(x, y, radius, props.onClick);
+    dartBoard = createDartBoard(x, y, radius, props.onClick, props.disabled);
 
     app?.stage.addChild(dartBoard);
   };
+
+  createEffect(() => {
+    app?.stage.removeChild(dartBoard);
+
+    const { x, y, radius } = calculateDartProps(app);
+    dartBoard = createDartBoard(x, y, radius, props.onClick, disabled());
+
+    app?.stage.addChild(dartBoard);
+  });
 
   return null;
 };
@@ -105,7 +117,8 @@ const createDartBoard = (
   x: number,
   y: number,
   radius: number,
-  onClick?: (clicked: string) => void
+  onClick?: (clicked: string) => void,
+  disabled?: boolean
 ) => {
   const container = new PIXI.Container();
   const dartBorder = createDartBorder(x, y, radius);
@@ -119,6 +132,7 @@ const createDartBoard = (
     angularShift: -(POLYGON_ANGLE / 2),
     throwPrefix: "",
     onClick,
+    disabled,
   });
 
   const doublePointsRing = createDartPointsCircle({
@@ -131,6 +145,7 @@ const createDartBoard = (
     angularShift: -(POLYGON_ANGLE / 2),
     throwPrefix: "D",
     onClick,
+    disabled,
   });
 
   const triplePointsRing = createDartPointsCircle({
@@ -143,6 +158,7 @@ const createDartBoard = (
     angularShift: -(POLYGON_ANGLE / 2),
     throwPrefix: "T",
     onClick,
+    disabled,
   });
 
   const outerBullCircle = createDartPointsCircle({
@@ -151,7 +167,9 @@ const createDartBoard = (
     radius: (1 / 5) * radius,
     colors: [DART_BOARD_GREEN_COLOR],
     parts: 1,
-    throwPrefix: "",
+    specialPart: "OB",
+    onClick,
+    disabled,
   });
 
   const bullCircle = createDartPointsCircle({
@@ -160,7 +178,9 @@ const createDartBoard = (
     radius: (1 / 9) * radius,
     colors: [DART_BOARD_RED_COLOR],
     parts: 1,
-    throwPrefix: "",
+    specialPart: "B",
+    onClick,
+    disabled,
   });
 
   container.addChild(dartBorder);

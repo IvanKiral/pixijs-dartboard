@@ -8,7 +8,7 @@ import { createSignal, Index } from "solid-js";
 import { createStore, unwrap } from "solid-js/store";
 import { Input } from "./Input";
 import { RadioGroup } from "./RadioGroup";
-import { createGame } from "../utils/game";
+import { createGame, getGameState, setGameState } from "../utils/game";
 import { type GameMode, type GameModeRules, gameModes, updateGameModeRules } from "../utils/gameModes";
 
 type DialogState = {
@@ -55,6 +55,10 @@ export const NewGameModal = (props: NewGameModalProps) => {
       onOpenChange={newOpen => {
         if (!newOpen) {
           setDialogState(createNewInitialState());
+        }
+        const gs = getGameState();
+        if(gs){
+          setGameState({...gs, state: newOpen ? "paused" : "playing"});
         }
         setOpen(newOpen);
       }}

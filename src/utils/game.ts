@@ -1,9 +1,8 @@
 import { createSignal } from "solid-js";
 import type { DartValue } from "./constants";
 import type { GameModeRules } from "./gameModes";
-import { match } from "ts-pattern";
 
-const [gameState, setGameState] = createSignal<GameState | null>(null);
+const [gameState, setGameStateInternal] = createSignal<GameState | null>(null);
 
 export type Round = {
   dartsThrown: ReadonlyArray<DartValue>;
@@ -28,7 +27,7 @@ export const createGame = (
   playersNames: string[],
   ruleset: GameModeRules
 ): GameState =>
-  setGameState({
+  setGameStateInternal({
     ruleset,
     currentPlayer: 0,
     players: playersNames.map((name, index) => ({
@@ -52,7 +51,7 @@ export const handleThrow = (dartValue: ReadonlyArray<DartValue>, gameState: Game
   console.log(gameState.ruleset.numberOfRounds, currentPlayer.rounds.length);
 
   if(gameState.ruleset.numberOfRounds > 0 && currentPlayer.rounds.length === gameState.ruleset.numberOfRounds + 1) {
-    setGameState({
+    setGameStateInternal({
       ...gameState,
       state: "finished",
     });
@@ -81,3 +80,5 @@ export const handleThrow = (dartValue: ReadonlyArray<DartValue>, gameState: Game
     state: gameState.ruleset.winCondition(newScore, newRound.dartsThrown) ? "finished" : "playing",
   });
 };
+
+export const setGameState = setGameStateInternal;

@@ -1,4 +1,4 @@
-import { createMemo, Index, For, createEffect } from "solid-js";
+import { createMemo, Index, For } from "solid-js";
 import type { Player, Round } from "../utils/game";
 
 import { zipMultipleWithPadding } from "../utils/common";

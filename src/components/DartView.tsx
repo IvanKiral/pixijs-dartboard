@@ -1,7 +1,7 @@
 import { createSignal, For } from "solid-js";
 import { PixiApplication } from "./PixiApplication";
 import { PixiDarts } from "./PixiDarts";
-import { handleThrow } from "../utils/game";
+import { getGameState, handleThrow } from "../utils/game";
 import { isDartValue, type DartValue } from "../utils/constants";
 
 export const DartView = () => {
@@ -18,7 +18,10 @@ export const DartView = () => {
   };
 
   const acceptDarts = () => {
-    handleThrow(darts());
+    const gameState = getGameState();
+    if (!gameState) return;
+    
+    handleThrow(darts(), gameState);
     setDarts([]);
   };
 

@@ -1,6 +1,7 @@
 import { createSignal } from "solid-js";
-import { POINTS_MAP, type DartValue } from "./constants";
-import { sum } from "./math";
+import type { DartValue } from "./constants";
+import type { GameModeRules } from "./gameModes";
+import { match } from "ts-pattern";
 
 const [gameState, setGameState] = createSignal<GameState | null>(null);
 
@@ -12,50 +13,63 @@ export type Round = {
 export type Player = {
   id: number;
   name: string;
-  score: number;
   rounds: ReadonlyArray<Round>;
 };
 
 export type GameState = {
-  gameMode: "501" | "301" | "Free";
+  ruleset: GameModeRules;
   currentPlayer: number;
   players: ReadonlyArray<Player>;
-  paused: boolean;
+  state:  "playing" | "paused" | "finished";
+  winner: Player | null;
 };
 
 export const createGame = (
   playersNames: string[],
-  gameMode: GameState["gameMode"]
+  ruleset: GameModeRules
 ): GameState =>
   setGameState({
-    gameMode,
+    ruleset,
     currentPlayer: 0,
     players: playersNames.map((name, index) => ({
       id: index,
       name,
-      score: gameMode === "Free" ? 0 : +gameMode,
-      rounds: [{ dartsThrown: [], score: gameMode === "Free" ? 0 : +gameMode }],
+      rounds: [{ dartsThrown: [], score: ruleset.initialScore }],
     })),
-    paused: false,
+    state: "playing",
+    winner: null,
   });
 
 export const getGameState = () => gameState();
 
-export const handleThrow = (dartValue: ReadonlyArray<DartValue>) => {
-  const gameState = getGameState();
-
-  if (!gameState) {
-    throw new Error("Game state is not set");
+export const handleThrow = (dartValue: ReadonlyArray<DartValue>, gameState: GameState) => {
+  if(gameState.state !== "playing" || gameState.winner) {
+    return;
   }
 
   const currentPlayer = gameState.players[gameState.currentPlayer];
+
+  console.log(gameState.ruleset.numberOfRounds, currentPlayer.rounds.length);
+
+  if(gameState.ruleset.numberOfRounds > 0 && currentPlayer.rounds.length === gameState.ruleset.numberOfRounds + 1) {
+    setGameState({
+      ...gameState,
+      state: "finished",
+    });
+
+    return;
+  }
+
   const currentRound = currentPlayer.rounds[currentPlayer.rounds.length - 1];
+
+  const calculatedNewScore = gameState.ruleset.calculateNewScore(currentRound.score, dartValue);
+  const newScore = calculatedNewScore >= 0 || gameState.ruleset.winCondition(calculatedNewScore, dartValue) ? calculatedNewScore : currentRound.score;
 
   const newRound = {
     dartsThrown: [...currentRound.dartsThrown, ...dartValue],
-    score:
-      currentRound.score - sum(dartValue.map((d) => POINTS_MAP.get(d) ?? 0)),
+    score: newScore,
   };
+
 
   setGameState({
     ...gameState,
@@ -63,5 +77,7 @@ export const handleThrow = (dartValue: ReadonlyArray<DartValue>) => {
     players: gameState.players.map((p) =>
       p.id === currentPlayer.id ? { ...p, rounds: [...p.rounds, newRound] } : p
     ),
+    winner: gameState.ruleset.winCondition(newScore, newRound.dartsThrown) ? currentPlayer : null,
+    state: gameState.ruleset.winCondition(newScore, newRound.dartsThrown) ? "finished" : "playing",
   });
 };

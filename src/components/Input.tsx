@@ -9,7 +9,7 @@ export const Input = (props: InputProps) => {
     <div class="flex flex-col gap-2">
       <input
         type="text"
-        class={`${local.class ?? ""} border-2 rounded-md p-2 border-secondary focus:outline-accent min-w-[32ch]`}
+        class={`${local.class ?? ""} border rounded-md p-2 border-secondary focus:outline-secondary`}
         {...others}
       />
       {local.error && <span class="text-red-500 text-sm">{local.error}</span>}

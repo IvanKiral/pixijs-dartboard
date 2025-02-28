@@ -9,7 +9,12 @@ import { createStore, unwrap } from "solid-js/store";
 import { Input } from "./Input";
 import { RadioGroup } from "./RadioGroup";
 import { createGame, getGameState, setGameState } from "../utils/game";
-import { type GameMode, type GameModeRules, gameModes, updateGameModeRules } from "../utils/gameModes";
+import {
+  type GameMode,
+  type GameModeRules,
+  gameModes,
+  updateGameModeRules,
+} from "../utils/gameModes";
 
 type DialogState = {
   playerNames: string[];
@@ -57,8 +62,8 @@ export const NewGameModal = (props: NewGameModalProps) => {
           setDialogState(createNewInitialState());
         }
         const gs = getGameState();
-        if(gs){
-          setGameState({...gs, state: newOpen ? "paused" : "playing"});
+        if (gs) {
+          setGameState({ ...gs, state: newOpen ? "paused" : "playing" });
         }
         setOpen(newOpen);
       }}
@@ -91,7 +96,10 @@ export const NewGameModal = (props: NewGameModalProps) => {
                 name="Game Modes"
                 defaultValue={dialogState.ruleset.id}
                 onChange={value =>
-                  setDialogState("ruleset", updateGameModeRules(gameModes[value as GameMode], {}))
+                  setDialogState(
+                    "ruleset",
+                    updateGameModeRules(gameModes[value as GameMode], {})
+                  )
                 }
               />
               <div class="flex gap-2 items-center">
@@ -101,10 +109,16 @@ export const NewGameModal = (props: NewGameModalProps) => {
                   class=" outline-secondary-hover max-w-[6ch] text-sm"
                   value={dialogState.ruleset.numberOfRounds}
                   onChange={e => {
-                    setDialogState("ruleset", "numberOfRounds", Number.parseInt(e.currentTarget.value));
+                    setDialogState(
+                      "ruleset",
+                      "numberOfRounds",
+                      Number.parseInt(e.currentTarget.value)
+                    );
                   }}
                 />
-                <label for="numberOfRounds" class="text-sm text-gray-700">Number of rounds</label>
+                <label for="numberOfRounds" class="text-sm text-gray-700">
+                  Number of rounds
+                </label>
               </div>
               <div class="flex flex-col gap-2">
                 <Index each={dialogState.playerNames}>
@@ -130,7 +144,11 @@ export const NewGameModal = (props: NewGameModalProps) => {
               <HiOutlinePlusCircle
                 class="text-4xl text-primary hover:text-primary-hover cursor-pointer transition-colors self-center"
                 onClick={() =>
-                  setDialogState("playerNames", dialogState.playerNames.length, "")
+                  setDialogState(
+                    "playerNames",
+                    dialogState.playerNames.length,
+                    ""
+                  )
                 }
               />
               {dialogState.error && (

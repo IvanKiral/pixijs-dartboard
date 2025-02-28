@@ -19,7 +19,7 @@ export type GameState = {
   ruleset: GameModeRules;
   currentPlayer: number;
   players: ReadonlyArray<Player>;
-  state:  "playing" | "paused" | "finished";
+  state: "playing" | "paused" | "finished";
   winner: Player | null;
 };
 
@@ -41,8 +41,11 @@ export const createGame = (
 
 export const getGameState = () => gameState();
 
-export const handleThrow = (dartValue: ReadonlyArray<DartValue>, gameState: GameState) => {
-  if(gameState.state !== "playing" || gameState.winner) {
+export const handleThrow = (
+  dartValue: ReadonlyArray<DartValue>,
+  gameState: GameState
+) => {
+  if (gameState.state !== "playing" || gameState.winner) {
     return;
   }
 
@@ -50,7 +53,10 @@ export const handleThrow = (dartValue: ReadonlyArray<DartValue>, gameState: Game
 
   console.log(gameState.ruleset.numberOfRounds, currentPlayer.rounds.length);
 
-  if(gameState.ruleset.numberOfRounds > 0 && currentPlayer.rounds.length === gameState.ruleset.numberOfRounds + 1) {
+  if (
+    gameState.ruleset.numberOfRounds > 0 &&
+    currentPlayer.rounds.length === gameState.ruleset.numberOfRounds + 1
+  ) {
     setGameStateInternal({
       ...gameState,
       state: "finished",
@@ -61,23 +67,33 @@ export const handleThrow = (dartValue: ReadonlyArray<DartValue>, gameState: Game
 
   const currentRound = currentPlayer.rounds[currentPlayer.rounds.length - 1];
 
-  const calculatedNewScore = gameState.ruleset.calculateNewScore(currentRound.score, dartValue);
-  const newScore = calculatedNewScore >= 0 || gameState.ruleset.winCondition(calculatedNewScore, dartValue) ? calculatedNewScore : currentRound.score;
+  const calculatedNewScore = gameState.ruleset.calculateNewScore(
+    currentRound.score,
+    dartValue
+  );
+  const newScore =
+    calculatedNewScore >= 0 ||
+    gameState.ruleset.winCondition(calculatedNewScore, dartValue)
+      ? calculatedNewScore
+      : currentRound.score;
 
   const newRound = {
     dartsThrown: [...currentRound.dartsThrown, ...dartValue],
     score: newScore,
   };
 
-
   setGameState({
     ...gameState,
     currentPlayer: (gameState.currentPlayer + 1) % gameState.players.length,
-    players: gameState.players.map((p) =>
+    players: gameState.players.map(p =>
       p.id === currentPlayer.id ? { ...p, rounds: [...p.rounds, newRound] } : p
     ),
-    winner: gameState.ruleset.winCondition(newScore, newRound.dartsThrown) ? currentPlayer : null,
-    state: gameState.ruleset.winCondition(newScore, newRound.dartsThrown) ? "finished" : "playing",
+    winner: gameState.ruleset.winCondition(newScore, newRound.dartsThrown)
+      ? currentPlayer
+      : null,
+    state: gameState.ruleset.winCondition(newScore, newRound.dartsThrown)
+      ? "finished"
+      : "playing",
   });
 };
 

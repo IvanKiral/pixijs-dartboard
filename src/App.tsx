@@ -7,8 +7,15 @@ import GameView from "./views/GameView";
 const App: Component = () => {
   return (
     <div class="w-full h-screen">
-      <Show when={getGameState()} fallback={<div class="flex h-full justify-center items-center">To start a new game click on the button in the right corner</div>}>
-        {(game) => (
+      <Show
+        when={getGameState()}
+        fallback={
+          <div class="flex h-full justify-center items-center">
+            To start a new game click on the button in the right corner
+          </div>
+        }
+      >
+        {game => (
           <div class="flex h-full">
             <div class="flex-1">
               <DartView />

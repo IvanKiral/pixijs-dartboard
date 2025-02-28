@@ -18,8 +18,8 @@ export const gameModes: Record<GameMode, GameModeRules> = {
     numberOfRounds: 15,
     calculateNewScore: (score: number, darts: ReadonlyArray<DartValue>) =>
       score - sum(darts.map((d: DartValue) => POINTS_MAP.get(d) ?? 0)),
-    winCondition: (score: number, darts: ReadonlyArray<DartValue>) => 
-      score === 0 && darts[darts.length - 1].startsWith('D'),
+    winCondition: (score: number, darts: ReadonlyArray<DartValue>) =>
+      score === 0 && darts[darts.length - 1].startsWith("D"),
   },
   "301": {
     id: "301",
@@ -27,10 +27,10 @@ export const gameModes: Record<GameMode, GameModeRules> = {
     numberOfRounds: 15,
     calculateNewScore: (score: number, darts: ReadonlyArray<DartValue>) =>
       score - sum(darts.map((d: DartValue) => POINTS_MAP.get(d) ?? 0)),
-    winCondition: (score: number, darts: ReadonlyArray<DartValue>) => 
-      score === 0 && darts[darts.length - 1].startsWith('D'),
+    winCondition: (score: number, darts: ReadonlyArray<DartValue>) =>
+      score === 0 && darts[darts.length - 1].startsWith("D"),
   },
-  "Free": {
+  Free: {
     id: "Free",
     initialScore: 0,
     numberOfRounds: 0,
@@ -40,7 +40,10 @@ export const gameModes: Record<GameMode, GameModeRules> = {
   },
 };
 
-export const updateGameModeRules = (ruleset: GameModeRules, updates: Partial<GameModeRules>) => {
+export const updateGameModeRules = (
+  ruleset: GameModeRules,
+  updates: Partial<GameModeRules>
+) => {
   return {
     ...ruleset,
     ...updates,

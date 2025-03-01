@@ -5,4 +5,5 @@ import solidPlugin from "vite-plugin-solid";
 
 export default defineConfig({
   plugins: [solidPlugin(), tailwindcss()],
+  base: "/pixijs-dartboard/",
 });
